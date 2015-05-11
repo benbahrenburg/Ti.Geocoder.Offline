@@ -185,15 +185,64 @@
     
     NSString *countryCode = [args objectForKey:@"countryCode"];
     
-    if(_territories == nil){
-        _territories = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-            [self loadGeoJSON:territoryFilePath][BXBFeaturesKey],countryCode,nil];
+    if(_territoriesInputs == nil){
+        _territoriesInputs = [NSMutableDictionary dictionaryWithObjectsAndKeys:territoryFilePath,countryCode,nil];
     }else{
-        [_territories setObject:[self loadGeoJSON:territoryFilePath][BXBFeaturesKey] forKey:countryCode];
+        [_territoriesInputs setValue:territoryFilePath forKey:countryCode];
     }
     
     NSLog(@"[DEBUG] Territories for %@ have been loaded", countryCode);
-    NSLog(@"[DEBUG] %d Territories loaded", [_territories count]);
+    NSLog(@"[DEBUG] %d Territories Cached", [_territoriesInputs count]);
+}
+
+-(void) cacheTerritory:(NSString*)code
+{
+    //If we don't have the info needed to load return
+    if([_territoriesInputs objectForKey:code] == nil){
+        return;
+    }
+    //If we are already cached, return
+    if([_territoriesCache objectForKey:code] != nil)
+    {
+        return;
+    }
+    
+    NSString *path = [_territoriesInputs objectForKey:code];
+    
+    if(_territoriesCache == nil){
+        _territoriesCache = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                              [self loadGeoJSON:path][BXBFeaturesKey],code,nil];
+    }else{
+        [_territoriesCache setObject:[self loadGeoJSON:path][BXBFeaturesKey] forKey:code];
+    }
+    
+    NSLog(@"[DEBUG] Territories for %@ have been loaded", code);
+    NSLog(@"[DEBUG] %d Territories cached", [_territoriesCache count]);
+}
+
+-(void) cacheSubTerritory:(NSString*)code
+{
+    //If we don't have the info needed to load return
+    if([_subTerritoriesInputs objectForKey:code] == nil){
+        return;
+    }
+    //If we are already cached, return
+    if([_territoriesCache objectForKey:code] != nil)
+    {
+        return;
+    }
+    
+    NSString *path = [_subTerritoriesInputs objectForKey:code];
+    
+    if(_subTerritoriesCache == nil){
+        _subTerritoriesCache = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                             [self loadGeoJSON:path][BXBFeaturesKey],code,nil];
+    }else{
+        [_subTerritoriesCache setObject:[self loadGeoJSON:path][BXBFeaturesKey] forKey:code];
+    }
+    
+    NSLog(@"[DEBUG] Sub Territories for %@ have been loaded", code);
+    NSLog(@"[DEBUG] %d Sub Territories cached", [_subTerritoriesCache count]);
 }
 
 -(void)registerSubTerritoryInfoForTerritoryCode:(id)args
@@ -224,22 +273,39 @@
     
     NSString *territoryCode = [args objectForKey:@"territoryCode"];
     
-    if(_subTerritories == nil){
-        _subTerritories = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    if(_subTerritoriesInputs == nil){
+        _subTerritoriesInputs = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                         [self loadGeoJSON:subTerritoryFilePath][BXBFeaturesKey],territoryCode,nil];
     }else{
-        [_subTerritories setObject:[self loadGeoJSON:subTerritoryFilePath][BXBFeaturesKey] forKey:territoryCode];
+        [_subTerritoriesInputs setObject:[self loadGeoJSON:subTerritoryFilePath][BXBFeaturesKey] forKey:territoryCode];
     }
     
     NSLog(@"[DEBUG] SubTerritories for %@ have been loaded", territoryCode);
-    NSLog(@"[DEBUG] %d SubTerritories loaded", [_subTerritories count]);
+    NSLog(@"[DEBUG] %d SubTerritories loaded", [_subTerritoriesInputs count]);
 }
 
+
+-(void)clearCache:(id)unused
+{
+    [_territoriesCache removeAllObjects];
+    [_subTerritoriesCache removeAllObjects];
+}
 
 -(void)unregisterAll:(id)unused
 {
     [_countries removeAllObjects];
-    [_territories removeAllObjects];
+    [_territoriesCache removeAllObjects];
+    [_territoriesInputs removeAllObjects];
+    [_subTerritoriesInputs removeAllObjects];
+    [_subTerritoriesCache removeAllObjects];
+}
+
+-(BOOL) determineSuccess:(BOOL)hasInfo withSuccess:(BOOL)success
+{
+    if(hasInfo == NO){
+        return YES;
+    }
+    return success;
 }
 
 -(void)reverseGeocoder:(id)args
@@ -267,50 +333,62 @@
     NSMutableDictionary * territoryResults;
     NSMutableDictionary * subTerritoryResults;
     
-    BOOL countrySuccess = (countrySearchResults != nil);
-    BOOL territorySuccess = YES;
-    BOOL subTerritorySuccess = YES;
+    BOOL hasTerritory = NO;
+    BOOL hasSubTerritory = NO;
     
-    if(countrySuccess){
+    if(countrySearchResults != nil){
         NSString *countryCode = countrySearchResults[@"countryCode"];
         NSLog(@"[DEBUG] countryCode %@", countryCode);
-        if([_territories objectForKey:countryCode]!= nil){
-            territoryResults = [self findFromCoordinate:coordinates withInfo:[_territories objectForKey:countryCode]];
-            territorySuccess = (territoryResults != nil);
-            if(territorySuccess){
+        if([_territoriesInputs objectForKey:countryCode]!= nil){
+            hasTerritory = YES;
+            [self cacheTerritory:countryCode];
+
+            territoryResults = [self findFromCoordinate:coordinates withInfo:[_territoriesCache objectForKey:countryCode]];
+            if(territoryResults != nil){
+                
                 NSString *territoryCode = countrySearchResults[@"code"];
                 NSLog(@"[DEBUG] territoryCode %@", territoryCode);
-                if([_subTerritories objectForKey:territoryCode]!= nil){
-                    subTerritoryResults = [self findFromCoordinate:coordinates withInfo:[_subTerritories objectForKey:territoryCode]];
-                    subTerritorySuccess = (subTerritoryResults != nil);
+                if([_subTerritoriesInputs objectForKey:territoryCode]!= nil){
+                    hasSubTerritory = YES;
+                    [self cacheSubTerritory:territoryCode];
+                    subTerritoryResults = [self findFromCoordinate:coordinates withInfo:[_subTerritoriesCache objectForKey:territoryCode]];
                 }
+                
             }
         }
     }
     
-    BOOL success = countrySuccess && territorySuccess && subTerritorySuccess;
+    BOOL success = (countrySearchResults != nil) &&
+                    [self determineSuccess:hasTerritory withSuccess:(territoryResults != nil)] &&
+                    [self determineSuccess:hasSubTerritory withSuccess:(subTerritoryResults != nil)];
     
     NSMutableDictionary *event =[[NSMutableDictionary alloc] init];
     [event setValue:NUMBOOL(success) forKey:@"success"];
-    [event setValue:[NSNumber numberWithFloat: lat] forKey:@"latitude"];
-    [event setValue:[NSNumber numberWithFloat: lon] forKey:@"longitude"];
     
-    if(countrySuccess){
-        if(countrySearchResults!=nil){
-            [event setObject:countrySearchResults forKey:@"country"];
-        }
+    [event setObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                      [NSNumber numberWithFloat: lat],@"latitude",
+                      [NSNumber numberWithFloat: lon],@"longitude",
+                      NUMBOOL(YES),@"country",
+                      NUMBOOL(hasTerritory),@"territory",
+                      NUMBOOL(hasSubTerritory),@"subTerritory",
+                      nil] forKey:@"mapInfo"];
+    
+    if(countrySearchResults!=nil){
+        [event setObject:countrySearchResults forKey:@"country"];
+    }else{
+        [event setObject:[NSNull null] forKey:@"country"];
     }
 
-    if(territorySuccess){
-        if(territoryResults!=nil){
-            [event setObject:territoryResults forKey:@"territory"];
-        }
+    if(territoryResults!=nil){
+        [event setObject:territoryResults forKey:@"territory"];
+    }else{
+        [event setObject:[NSNull null] forKey:@"territory"];
     }
     
-    if(subTerritorySuccess){
-        if(subTerritoryResults!=nil){
-            [event setObject:subTerritoryResults forKey:@"subterritory"];
-        }
+    if(subTerritoryResults!=nil){
+        [event setObject:subTerritoryResults forKey:@"subTerritory"];
+    }else{
+        [event setObject:[NSNull null] forKey:@"subTerritory"];
     }
     
     [self _fireEventToListener:@"completed" withObject:event listener:callback thisObject:nil];

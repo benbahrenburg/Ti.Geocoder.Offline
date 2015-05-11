@@ -13,7 +13,11 @@ static NSString *const BXBFeaturesKey  = @"features";
 }
 
 @property (nonatomic, strong, readwrite) NSMutableArray *countries;
-@property (nonatomic, strong, readwrite) NSMutableDictionary *territories;
-@property (nonatomic, strong, readwrite) NSMutableDictionary *subTerritories;
+
+@property (nonatomic, strong, readwrite) NSMutableDictionary *territoriesInputs;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *subTerritoriesInputs;
+
+@property (nonatomic, strong, readwrite) NSMutableDictionary *territoriesCache;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *subTerritoriesCache;
 
 @end
