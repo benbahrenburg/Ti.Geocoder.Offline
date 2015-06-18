@@ -81,11 +81,25 @@
 
 - (NSMutableDictionary *) buildResults:(NSDictionary *)dictionary
 {
+    if(_debug){
+        NSLog(@"[DEBUG] packaging results %@",dictionary);
+    }
  
-    NSMutableDictionary* info = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                 dictionary[@"id"],@"id",
-                                 dictionary[@"properties"],@"properties",
-                                 nil];
+    NSMutableDictionary *info =[[NSMutableDictionary alloc] init];
+    
+    if(dictionary[@"id"]){
+        [info setObject:dictionary[@"id"] forKey:@"id"];
+    }
+
+    if(dictionary[@"properties"]){
+        [info setObject:dictionary[@"properties"] forKey:@"properties"];
+    }
+    
+    if(!dictionary[@"properties"] && !dictionary[@"id"])
+    {
+        [info setObject:dictionary forKey:@"raw"];
+    }
+    
     return info;
 }
 
@@ -220,7 +234,7 @@
     
     NSMutableDictionary *searchResults = [self findFromCoordinate:coordinates withInfo:_places];
     
-    BOOL success = (searchResults != nil);
+    BOOL success = (searchResults != nil) && ([[searchResults allKeys] count] > 0);
     
     NSMutableDictionary *event =[[NSMutableDictionary alloc] init];
     [event setValue:NUMBOOL(success) forKey:@"success"];
@@ -231,6 +245,9 @@
                           nil] forKey:@"mapInfo"];
     
     if(success){
+        if(_debug){
+            NSLog(@"[DEBUG] searchResults %@", searchResults);
+        }
         [event setObject:searchResults forKey:@"results"];
     }
     
