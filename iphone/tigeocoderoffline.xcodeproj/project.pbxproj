@@ -30,6 +30,8 @@
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		CA2D976E1B0010700026EE7C /* APPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = CA2D976C1B0010700026EE7C /* APPolygon.h */; };
 		CA2D976F1B0010700026EE7C /* APPolygon.m in Sources */ = {isa = PBXBuildFile; fileRef = CA2D976D1B0010700026EE7C /* APPolygon.m */; };
+		CAABF2B21B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CAABF2B01B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.h */; };
+		CAABF2B31B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = CAABF2B11B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,8 @@
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CA2D976C1B0010700026EE7C /* APPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APPolygon.h; path = Classes/APPolygon.h; sourceTree = "<group>"; };
 		CA2D976D1B0010700026EE7C /* APPolygon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = APPolygon.m; path = Classes/APPolygon.m; sourceTree = "<group>"; };
+		CAABF2B01B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiGeocoderOfflineGeoJsonProxy.h; path = Classes/TiGeocoderOfflineGeoJsonProxy.h; sourceTree = "<group>"; };
+		CAABF2B11B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiGeocoderOfflineGeoJsonProxy.m; path = Classes/TiGeocoderOfflineGeoJsonProxy.m; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libTiGeocoderOffline.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTiGeocoderOffline.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -103,6 +107,8 @@
 				24DE9E1011C5FE74003F90F6 /* TiGeocoderOfflineModuleAssets.m */,
 				24DD6CF71134B3F500162E58 /* TiGeocoderOfflineModule.h */,
 				24DD6CF81134B3F500162E58 /* TiGeocoderOfflineModule.m */,
+				CAABF2B01B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.h */,
+				CAABF2B11B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -126,6 +132,7 @@
 				AA747D9F0F9514B9006C5449 /* TiGeocoderOffline_Prefix.pch in Headers */,
 				24DD6CF91134B3F500162E58 /* TiGeocoderOfflineModule.h in Headers */,
 				CA2D976E1B0010700026EE7C /* APPolygon.h in Headers */,
+				CAABF2B21B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.h in Headers */,
 				24DE9E1111C5FE74003F90F6 /* TiGeocoderOfflineModuleAssets.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -201,6 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24DD6CFA1134B3F500162E58 /* TiGeocoderOfflineModule.m in Sources */,
+				CAABF2B31B333D68002FACCC /* TiGeocoderOfflineGeoJsonProxy.m in Sources */,
 				CA2D976F1B0010700026EE7C /* APPolygon.m in Sources */,
 				24DE9E1211C5FE74003F90F6 /* TiGeocoderOfflineModuleAssets.m in Sources */,
 			);

@@ -4,10 +4,13 @@
  * Licensed under the terms of the Apache Public License
  * Please see the LICENSE included with this distribution for details.
  */
+#import "TiProxy.h"
 
-#import "TiModule.h"
-
-@interface TiGeocoderOfflineModule : TiModule{
+@interface TiGeocoderOfflineGeoJsonProxy : TiProxy {
+    @private
+    BOOL _debug;
 }
+
+@property (nonatomic, strong, readwrite) NSMutableArray *places;
 
 @end
