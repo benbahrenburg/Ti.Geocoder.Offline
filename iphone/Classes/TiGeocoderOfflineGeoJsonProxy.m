@@ -56,7 +56,7 @@
         _places = nil;
     }
     
-    _places = [self loadGeoJSON:filePath][@"features"];
+    _places = [[self loadGeoJSON:filePath][@"features"] mutableCopy];
     
     if(_debug){
         NSLog(@"[DEBUG] %d places loaded", [_places count]);
@@ -72,7 +72,7 @@
                                                                  error:&error];
     
     if (!error) {
-        return [parsedJSON copy];
+        return parsedJSON;
     } else {
         NSLog(@"[ERROR] Cannot parse JSON %@", [error localizedDescription]);
         [NSException raise:@"Cannot parse JSON." format:@"JSON URL - %@\nError:%@", path, parsedJSON];
