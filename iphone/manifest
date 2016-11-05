@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 1.0.0
+version: 1.1.0
 apiversion: 2
 architectures: armv7 arm64 i386 x86_64
 description: Offline Geocoding
@@ -15,4 +15,4 @@ name: tigeocoderoffline
 moduleid: ti.geocoder.offline
 guid: 149b1004-c13c-4b48-9a41-4b5d78d44bfd
 platform: iphone
-minsdk: 3.5.1.GA
+minsdk: 5.4.0.GA
